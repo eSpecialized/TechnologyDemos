@@ -20,6 +20,12 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Location required for showing user locations on a map. Only locally updated until App is killed.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Location required for showing user locations on a map. Only locally updated until App is killed.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Location required for showing user locations on a map. Only locally updated until App is killed.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -39,6 +45,10 @@
 			</array>
 		</dict>
 	</dict>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

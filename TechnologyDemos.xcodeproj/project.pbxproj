@@ -7,15 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		355FD94B24EB1C50008B2868 /* GeoAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355FD94A24EB1C50008B2868 /* GeoAnnotationView.swift */; };
 		35852D2124EADAD2000D21FC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D2024EADAD2000D21FC /* AppDelegate.swift */; };
 		35852D2424EADAD2000D21FC /* TechnologyDemos.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 35852D2224EADAD2000D21FC /* TechnologyDemos.xcdatamodeld */; };
 		35852D2624EADAD2000D21FC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D2524EADAD2000D21FC /* SceneDelegate.swift */; };
 		35852D2824EADAD2000D21FC /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D2724EADAD2000D21FC /* MasterViewController.swift */; };
-		35852D2A24EADAD2000D21FC /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D2924EADAD2000D21FC /* DetailViewController.swift */; };
 		35852D2D24EADAD2000D21FC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 35852D2B24EADAD2000D21FC /* Main.storyboard */; };
 		35852D2F24EADAD6000D21FC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 35852D2E24EADAD6000D21FC /* Assets.xcassets */; };
 		35852D3224EADAD6000D21FC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 35852D3024EADAD6000D21FC /* LaunchScreen.storyboard */; };
 		35852D3D24EADAD6000D21FC /* TechnologyDemosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D3C24EADAD6000D21FC /* TechnologyDemosTests.swift */; };
+		35852D4924EADB07000D21FC /* CoreMotionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D4824EADB07000D21FC /* CoreMotionViewController.swift */; };
+		35852D4B24EAF405000D21FC /* CoreMotionSingleton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D4A24EAF405000D21FC /* CoreMotionSingleton.swift */; };
+		35852D4D24EAF415000D21FC /* LogSingletonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D4C24EAF415000D21FC /* LogSingletonViewController.swift */; };
+		35852D4F24EB0096000D21FC /* AccelerometerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D4E24EB0096000D21FC /* AccelerometerModel.swift */; };
+		35F1BD8624EB03A600415660 /* LocationMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F1BD8524EB03A600415660 /* LocationMapViewController.swift */; };
+		35F1BD8B24EB048300415660 /* LocationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F1BD8A24EB048300415660 /* LocationsTableViewController.swift */; };
+		35F1BD8D24EB066D00415660 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F1BD8C24EB066D00415660 /* LocationManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,12 +36,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		353EC4B324EB2D8B00931959 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		355FD94A24EB1C50008B2868 /* GeoAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoAnnotationView.swift; sourceTree = "<group>"; };
 		35852D1D24EADAD2000D21FC /* TechnologyDemos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TechnologyDemos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		35852D2024EADAD2000D21FC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		35852D2324EADAD2000D21FC /* TechnologyDemos.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TechnologyDemos.xcdatamodel; sourceTree = "<group>"; };
 		35852D2524EADAD2000D21FC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		35852D2724EADAD2000D21FC /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
-		35852D2924EADAD2000D21FC /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		35852D2C24EADAD2000D21FC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		35852D2E24EADAD6000D21FC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		35852D3124EADAD6000D21FC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -42,6 +50,13 @@
 		35852D3824EADAD6000D21FC /* TechnologyDemosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TechnologyDemosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		35852D3C24EADAD6000D21FC /* TechnologyDemosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TechnologyDemosTests.swift; sourceTree = "<group>"; };
 		35852D3E24EADAD6000D21FC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		35852D4824EADB07000D21FC /* CoreMotionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMotionViewController.swift; sourceTree = "<group>"; };
+		35852D4A24EAF405000D21FC /* CoreMotionSingleton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMotionSingleton.swift; sourceTree = "<group>"; };
+		35852D4C24EAF415000D21FC /* LogSingletonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogSingletonViewController.swift; sourceTree = "<group>"; };
+		35852D4E24EB0096000D21FC /* AccelerometerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccelerometerModel.swift; sourceTree = "<group>"; };
+		35F1BD8524EB03A600415660 /* LocationMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationMapViewController.swift; sourceTree = "<group>"; };
+		35F1BD8A24EB048300415660 /* LocationsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationsTableViewController.swift; sourceTree = "<group>"; };
+		35F1BD8C24EB066D00415660 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,9 +77,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		353EC4B424EB300700931959 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				35852D4E24EB0096000D21FC /* AccelerometerModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		35852D1424EADAD2000D21FC = {
 			isa = PBXGroup;
 			children = (
+				353EC4B324EB2D8B00931959 /* README.md */,
 				35852D1F24EADAD2000D21FC /* TechnologyDemos */,
 				35852D3B24EADAD6000D21FC /* TechnologyDemosTests */,
 				35852D1E24EADAD2000D21FC /* Products */,
@@ -86,8 +110,10 @@
 				35852D2024EADAD2000D21FC /* AppDelegate.swift */,
 				35852D2524EADAD2000D21FC /* SceneDelegate.swift */,
 				35852D2724EADAD2000D21FC /* MasterViewController.swift */,
-				35852D2924EADAD2000D21FC /* DetailViewController.swift */,
+				35F1BD8924EB046400415660 /* Location */,
+				35852D4724EADAE9000D21FC /* CoreMotion */,
 				35852D2B24EADAD2000D21FC /* Main.storyboard */,
+				35852D5024EB00B9000D21FC /* Singletons-Managers */,
 				35852D2E24EADAD6000D21FC /* Assets.xcassets */,
 				35852D3024EADAD6000D21FC /* LaunchScreen.storyboard */,
 				35852D3324EADAD6000D21FC /* Info.plist */,
@@ -103,6 +129,35 @@
 				35852D3E24EADAD6000D21FC /* Info.plist */,
 			);
 			path = TechnologyDemosTests;
+			sourceTree = "<group>";
+		};
+		35852D4724EADAE9000D21FC /* CoreMotion */ = {
+			isa = PBXGroup;
+			children = (
+				35852D4824EADB07000D21FC /* CoreMotionViewController.swift */,
+			);
+			path = CoreMotion;
+			sourceTree = "<group>";
+		};
+		35852D5024EB00B9000D21FC /* Singletons-Managers */ = {
+			isa = PBXGroup;
+			children = (
+				353EC4B424EB300700931959 /* Models */,
+				35852D4A24EAF405000D21FC /* CoreMotionSingleton.swift */,
+				35852D4C24EAF415000D21FC /* LogSingletonViewController.swift */,
+				35F1BD8C24EB066D00415660 /* LocationManager.swift */,
+			);
+			path = "Singletons-Managers";
+			sourceTree = "<group>";
+		};
+		35F1BD8924EB046400415660 /* Location */ = {
+			isa = PBXGroup;
+			children = (
+				35F1BD8524EB03A600415660 /* LocationMapViewController.swift */,
+				355FD94A24EB1C50008B2868 /* GeoAnnotationView.swift */,
+				35F1BD8A24EB048300415660 /* LocationsTableViewController.swift */,
+			);
+			path = Location;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -206,11 +261,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				35F1BD8B24EB048300415660 /* LocationsTableViewController.swift in Sources */,
 				35852D2824EADAD2000D21FC /* MasterViewController.swift in Sources */,
+				355FD94B24EB1C50008B2868 /* GeoAnnotationView.swift in Sources */,
 				35852D2424EADAD2000D21FC /* TechnologyDemos.xcdatamodeld in Sources */,
-				35852D2A24EADAD2000D21FC /* DetailViewController.swift in Sources */,
+				35852D4D24EAF415000D21FC /* LogSingletonViewController.swift in Sources */,
 				35852D2124EADAD2000D21FC /* AppDelegate.swift in Sources */,
+				35F1BD8624EB03A600415660 /* LocationMapViewController.swift in Sources */,
+				35852D4B24EAF405000D21FC /* CoreMotionSingleton.swift in Sources */,
+				35852D4F24EB0096000D21FC /* AccelerometerModel.swift in Sources */,
+				35F1BD8D24EB066D00415660 /* LocationManager.swift in Sources */,
 				35852D2624EADAD2000D21FC /* SceneDelegate.swift in Sources */,
+				35852D4924EADB07000D21FC /* CoreMotionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -380,7 +442,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.billthompson.TechnologyDemos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -398,7 +460,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.billthompson.TechnologyDemos;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
