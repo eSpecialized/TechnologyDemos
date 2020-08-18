@@ -9,7 +9,7 @@
 import Foundation
 import MapKit
 
-class GeoAnnotation: NSObject, MKAnnotation {
+final class GeoAnnotation: NSObject, MKAnnotation {
     var coordinate: CLLocationCoordinate2D
 
     var date: Date?
@@ -25,7 +25,7 @@ class GeoAnnotation: NSObject, MKAnnotation {
     }
 }
 
-class GeoAnnotationView: MKPinAnnotationView {
+final class GeoAnnotationView: MKPinAnnotationView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

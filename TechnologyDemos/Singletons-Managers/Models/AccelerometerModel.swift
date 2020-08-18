@@ -8,24 +8,30 @@
 
 import Foundation
 
-struct AccelerometerModel: Equatable {
-    let xAccel: Double
-    let yAccel: Double
-    let zAccel: Double
+public struct AccelerometerModel: Equatable {
+    // MARK: - Properties
 
-    init(xAccel: Double, yAccel: Double, zAccel: Double) {
+    public let xAccel: Double
+    public let yAccel: Double
+    public let zAccel: Double
+
+    // MARK: - Initializers
+
+    public init(xAccel: Double, yAccel: Double, zAccel: Double) {
         self.xAccel = xAccel
         self.yAccel = yAccel
         self.zAccel = zAccel
     }
 
-    init(with model: AccelerometerModel, xAccel: Double? = nil, yAccel: Double? = nil, zAccel: Double? = nil) {
+    public init(with model: AccelerometerModel, xAccel: Double? = nil, yAccel: Double? = nil, zAccel: Double? = nil) {
         self.xAccel = xAccel ?? model.xAccel
         self.yAccel = yAccel ?? model.yAccel
         self.zAccel = zAccel ?? model.zAccel
     }
 
-    static func zero() -> AccelerometerModel {
+    // MARK: - Supporting methods
+
+    public static func zero() -> AccelerometerModel {
         return AccelerometerModel(xAccel: 0, yAccel: 0, zAccel: 0)
     }
 }

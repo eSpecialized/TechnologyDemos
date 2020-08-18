@@ -9,22 +9,28 @@
 import Foundation
 import CoreMotion
 
-class CoreMotionSingleton {
-    static var shared = CoreMotionSingleton()
 
-    var backgroundUpdates = true
+/// A singleton to Manage all CoreMotion events.
+public final class CoreMotionSingleton {
+    // MARK: - Properties
 
     private var motionManager = CMMotionManager()
-
-    var updateAccelerometerHandler: ((AccelerometerModel) -> ())?
-
     private(set) var maxModel = AccelerometerModel.zero()
 
-    init() {
+    public static var shared = CoreMotionSingleton()
+    public var backgroundUpdates = true
+    public var updateAccelerometerHandler: ((AccelerometerModel) -> ())?
+
+    // MARK: - Initializers
+
+    public init() {
         log.appendLog("start", eventSource: .motionAccel)
     }
 
-    func start() {
+    // MARK: - Support Methods
+
+    /// Starts Core Motion Updates, updates are through the `updateAccelerometerHandler`
+    public func start() {
         let operationQueue: OperationQueue = {
             if self.backgroundUpdates {
                 let newQueue = OperationQueue()
@@ -54,7 +60,8 @@ class CoreMotionSingleton {
         }
     }
 
-    func stop() {
+    /// Stops Core Motion Updates. Resets the `updateAccelerometerHandler` to nil
+    public func stop() {
         motionManager.stopAccelerometerUpdates()
         updateAccelerometerHandler = nil
     }

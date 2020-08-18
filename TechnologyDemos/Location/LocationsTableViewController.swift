@@ -10,13 +10,16 @@ import CoreData
 import UIKit
 import CoreLocation
 
-class LocationsTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+final class LocationsTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+    // MARK: - Properties
+
+    private let dateFormatter = DateFormatter()
+    private let locationManager = LocationManager.shared
 
     var managedObjectContext: NSManagedObjectContext? = nil
-    let dateFormatter = DateFormatter()
 
-    let locationManager = LocationManager.shared
-    
+    // MARK: - Init and View Management
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -36,7 +39,7 @@ class LocationsTableViewController: UITableViewController, NSFetchedResultsContr
         log.appendLog("de-init", eventSource: .locationsTableViewController)
     }
 
-    // MARK: -
+    // MARK: - Support Methods
 
     @objc
     func clearAllEvents() {
@@ -133,6 +136,7 @@ class LocationsTableViewController: UITableViewController, NSFetchedResultsContr
 
         return _fetchedResultsController!
     }
+
     var _fetchedResultsController: NSFetchedResultsController<GeoEvent>? = nil
 
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
@@ -170,6 +174,8 @@ class LocationsTableViewController: UITableViewController, NSFetchedResultsContr
         tableView.endUpdates()
     }
 }
+
+// MARK: - LocationManagerDelegate
 
 extension LocationsTableViewController: LocationManagerDelegate {
     func update(with location: CLLocation) {

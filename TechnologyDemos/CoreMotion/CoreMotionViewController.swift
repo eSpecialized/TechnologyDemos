@@ -7,27 +7,25 @@
 //
 
 import UIKit
-//import CoreMotion
 
-class CoreMotionViewController: UIViewController {
+final class CoreMotionViewController: UIViewController {
+    // MARK: - Properties
 
-    let motion = CoreMotionSingleton.shared
-    
     @IBOutlet weak var logView: UITextView!
-
     @IBOutlet weak var xaccelLabel: UILabel!
     @IBOutlet weak var yaccelLabel: UILabel!
     @IBOutlet weak var zaccelLabel: UILabel!
-
     @IBOutlet weak var maxLabel: UILabel!
-
     @IBOutlet weak var warningsLabel: UILabel!
-    private var warningResetTimer: Timer?
-
     @IBOutlet weak var backgroundSwitch: UISwitch!
 
+    private var warningResetTimer: Timer?
     private var updateAccelerometerHandler:  ((AccelerometerModel) -> ())?
     private var model = AccelerometerModel(xAccel: 0, yAccel: 0, zAccel: 0)
+
+    let motion = CoreMotionSingleton.shared
+
+    // MARK: - Init and View Management
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,6 +60,8 @@ class CoreMotionViewController: UIViewController {
         }
     }
 
+    // MARK: - Support Methods
+
     @IBAction func backgroundSwitchChanged(_ sender: Any) {
         motion.backgroundUpdates = backgroundSwitch.isOn
         motion.stop()
@@ -92,11 +92,11 @@ class CoreMotionViewController: UIViewController {
             }
 
             if forceY > limits {
-                forceText = String(format:"Y %.3f", forceX)
+                forceText = String(format:"Y %.3f", forceY)
             }
 
             if forceZ > limits {
-                forceText = String(format:"Z %.3f", forceX)
+                forceText = String(format:"Z %.3f", forceZ)
             }
 
             warningsLabel.text = "Force exceeded limits \(forceText)"
@@ -127,7 +127,7 @@ class CoreMotionViewController: UIViewController {
         maxLabel.text = maxText
     }
 
-    override var shouldAutorotate: Bool {
-        return false
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return .portrait
     }
 }

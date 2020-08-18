@@ -10,35 +10,64 @@ import CoreData
 import CoreLocation
 import Foundation
 
-protocol LocationManagerDelegate: class {
+/// LocationManagerDelegate call back for update when location changes.
+public protocol LocationManagerDelegate: class {
     func update(with location: CLLocation)
 }
 
-class LocationManager: NSObject, NSFetchedResultsControllerDelegate {
-    static var shared = LocationManager()
-
-    var managedObjectContext: NSManagedObjectContext? = nil
+/// Location manager for handling all CLLocationManager setup, location updates and more.
+public final class LocationManager: NSObject, NSFetchedResultsControllerDelegate {
+    // MARK: - Properties
 
     private var locationManager = CLLocationManager()
     private var locationUpdating = false
-    private var _lastLocation: CLLocation?
-    weak var delegate: LocationManagerDelegate?
+    private var lastLocation: CLLocation?
+    private var homeLocation: CLLocation?
 
-    var isLocationUpdating: Bool {
+    public static var shared = LocationManager()
+
+    public var managedObjectContext: NSManagedObjectContext? = nil
+
+    public weak var delegate: LocationManagerDelegate?
+
+    public var isLocationUpdating: Bool {
         return locationUpdating
     }
 
-    override init() {
+    // MARK: - Init and View Management
+
+    public override init() {
         super.init()
 
         locationManager.requestAlwaysAuthorization()
         locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+
+        //for lower power consumption.
+        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
 
         locationManager.allowsBackgroundLocationUpdates = true
+
+        let userDefaults = UserDefaults.standard
+        let decoder = JSONDecoder()
+        do {
+            guard let locationData = userDefaults.object(forKey: "homeLocation") as? Data
+            else {
+                log.appendLog("Unable to load home locstion data", eventSource: .location)
+                return
+            }
+
+            let homeLocation2D = try decoder.decode(Location2D.self, from: locationData)
+
+            homeLocation = CLLocation(latitude: homeLocation2D.latitude, longitude: homeLocation2D.longitude)
+        } catch {
+            log.appendLog("\(error)", eventSource: .location)
+        }
     }
 
-    func start() {
+    // MARK: - Support Methods
+
+    /// Starts Location Tracking
+    public func start() {
         guard
             !locationUpdating,
             CLLocationManager.authorizationStatus() == .authorizedAlways ||
@@ -52,10 +81,47 @@ class LocationManager: NSObject, NSFetchedResultsControllerDelegate {
         log.appendLog("startUpdatingLocation", eventSource: .location)
     }
 
-    func stop() {
+    /// Stops location Tracking
+    public func stop() {
         locationManager.stopUpdatingLocation()
         locationUpdating = false
         log.appendLog("stopUpdatingLocation", eventSource: .location)
+    }
+
+    private func addHomeLocation(_ location: CLLocation) {
+        let userDefaults = UserDefaults.standard
+        let location2d = Location2D(latitude: location.coordinate.latitude, longitude: location.coordinate.longitude)
+        let encoder = JSONEncoder()
+        do {
+            let encodedLocation = try encoder.encode(location2d)
+            userDefaults.set(encodedLocation, forKey: "homeLocation")
+            userDefaults.synchronize()
+            homeLocation = location
+        } catch {
+            print(error)
+        }
+    }
+
+    private func recordAsGeoEvent(location: CLLocation) {
+        let coordinate = location.coordinate
+
+        let speedMeasure = Measurement<UnitSpeed>(value: location.speed, unit: .metersPerSecond)
+
+        let context = self.fetchedResultsController.managedObjectContext
+        let newGeoEvent = GeoEvent(context: context)
+
+        newGeoEvent.timestamp = Date()
+        newGeoEvent.latitude = coordinate.latitude
+        newGeoEvent.longitude = coordinate.longitude
+
+        newGeoEvent.speedMPH = speedMeasure.converted(to: .milesPerHour).value
+
+        do {
+            try context.save()
+        } catch {
+            let nserror = error as NSError
+            log.appendLog("Unresolved error \(nserror)", eventSource: .location)
+        }
     }
 
     private var fetchedResultsController: NSFetchedResultsController<GeoEvent> {
@@ -72,7 +138,13 @@ class LocationManager: NSObject, NSFetchedResultsControllerDelegate {
 
         fetchRequest.sortDescriptors = [sortDescriptor]
 
-        let aFetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: nil, cacheName: "Master")
+        let aFetchedResultsController = NSFetchedResultsController(
+                fetchRequest: fetchRequest,
+                managedObjectContext: self.managedObjectContext!,
+                sectionNameKeyPath: nil,
+                cacheName: "Master"
+        )
+        
         aFetchedResultsController.delegate = self
         _fetchedResultsController = aFetchedResultsController
 
@@ -92,52 +164,40 @@ class LocationManager: NSObject, NSFetchedResultsControllerDelegate {
 // MARK: - Location Manager delegates
 
 extension LocationManager: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let firstLocation = locations.first else { return }
 
-        delegate?.update(with: firstLocation)
+        DispatchQueue.main.async { [weak self] in
+            self?.delegate?.update(with: firstLocation)
+        }
 
         let coordinate = firstLocation.coordinate
-
         let locationText = "Lat:\(coordinate.latitude) Long:\(coordinate.longitude)"
-
-        // This firstLocation.speed is in meters per second.
         let speedMeasure = Measurement<UnitSpeed>(value: firstLocation.speed, unit: .metersPerSecond)
+        let mphText = fabs(speedMeasure.value)
+        log.appendLog("didUpdateLocations \(locationText) speed MPH = \(mphText)", eventSource: .location)
 
-        log.appendLog("didUpdateLocations \(locationText) speed MPH = \(speedMeasure.converted(to: .milesPerHour).value)", eventSource: .location)
+        let homeDistanceInMeters = fabs(homeLocation?.distance(from: firstLocation) ?? 0.0)
 
-//        if let lastLocation = _lastLocation {
-//            let distanceInMeters = Measurement<UnitLength>(value: firstLocation.distance(from: lastLocation), unit: .meters)
+        //Only record if the distance from Home is 200 or more meters.
+        if fabs(homeDistanceInMeters) > 200.0 {
+            recordAsGeoEvent(location: firstLocation)
+            locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+        } else {
+            log.appendLog("No significant distance travelled. Distance from home = \(homeDistanceInMeters) meters", eventSource: .location)
+            locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+        }
 
-            //I only want to record distances of travel so when pins are dropped on the map, they have some spacing.
-            // also a speed greater than 3.0 meters (6.7mph) per second would be good.
-//            if  distanceInMeters.value > 1 || lastLocation.speed > 3.0 {
-                let context = self.fetchedResultsController.managedObjectContext
-                let newGeoEvent = GeoEvent(context: context)
+        //Simple, lets just assume you are at the home location for the first location after one is skipped.
+        if lastLocation != nil, homeLocation == nil {
+            addHomeLocation(firstLocation)
+            recordAsGeoEvent(location: firstLocation)
+        }
 
-                newGeoEvent.timestamp = Date()
-                newGeoEvent.latitude = coordinate.latitude
-                newGeoEvent.longitude = coordinate.longitude
-
-                newGeoEvent.speedMPH = speedMeasure.converted(to: .milesPerHour).value
-
-                do {
-                    try context.save()
-                } catch {
-                    let nserror = error as NSError
-                    log.appendLog("Unresolved error \(nserror)", eventSource: .location)
-                }
-//            } else {
-//                log.appendLog("No significant distance travelled", eventSource: .location)
-//            }
-//        }
-
-        //this causes skipping the first location delivered.
-        //for GPS warmups on some devices, we would want to skip a few readings actually.
-        _lastLocation = firstLocation
+        lastLocation = firstLocation
     }
 
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         let statusText: String = {
             switch status {
                 case .authorizedAlways:
@@ -160,4 +220,10 @@ extension LocationManager: CLLocationManagerDelegate {
         //try to startup
         start()
     }
+}
+
+//Struct for storing home location in NSUserDefaults easily.
+struct Location2D: Codable  {
+    let latitude: Double
+    let longitude: Double
 }

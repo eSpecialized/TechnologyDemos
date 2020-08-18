@@ -10,12 +10,8 @@ import CoreData
 import MapKit
 import UIKit
 
-class LocationMapViewController: UIViewController, NSFetchedResultsControllerDelegate, MKMapViewDelegate {
+final class LocationMapViewController: UIViewController, NSFetchedResultsControllerDelegate, MKMapViewDelegate {
     // MARK: - Properties
-    private let SimplePinIdent = "SimplePinIdent"
-    var managedObjectContext: NSManagedObjectContext? = nil
-
-    private let locationManager = LocationManager.shared
 
     @IBOutlet weak var mapView: MKMapView!
 
@@ -33,9 +29,15 @@ class LocationMapViewController: UIViewController, NSFetchedResultsControllerDel
             mapEventsLock.unlock()
         }
     }
-
     private var mapEventsLock = NSLock()
+
+    private let SimplePinIdent = "SimplePinIdent"
+    private let locationManager = LocationManager.shared
     private let dateFormatter = DateFormatter()
+
+    var managedObjectContext: NSManagedObjectContext? = nil
+
+    // MARK: - Init and View Management
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,7 +56,7 @@ class LocationMapViewController: UIViewController, NSFetchedResultsControllerDel
         log.appendLog("de-init", eventSource: .locationViewController)
     }
 
-    // MARK: -
+    // MARK: - Support Methods
 
     private func loadAllEvents() {
         if let allEvents = fetchedResultsController.sections![0].objects as? [GeoEvent] {
@@ -70,27 +72,8 @@ class LocationMapViewController: UIViewController, NSFetchedResultsControllerDel
         var viewRegion: MKCoordinateRegion?
 
         let annotations = mapEvents.compactMap { geoEvent -> GeoAnnotation? in
-            guard let timeStamp = geoEvent.timestamp else { return nil }
-
-            let timeString = dateFormatter.string(from: timeStamp)
-            let coordinate = CLLocationCoordinate2DMake(geoEvent.latitude, geoEvent.longitude)
-            let annotation = GeoAnnotation(coordinate: coordinate)
-
-            annotation.title = "\(timeString) \(geoEvent.speedMPH)"
-
-            let centerCoordinates = CLLocationCoordinate2DMake(
-                geoEvent.latitude,
-                geoEvent.longitude
-            )
-
-            let meters_per_mile = 1609.3
-
-            let radius: CLLocationDistance = 15 * meters_per_mile
-            viewRegion = MKCoordinateRegion(
-                center: centerCoordinates,
-                latitudinalMeters: radius,
-                longitudinalMeters: radius
-            )
+            let (annotation, viewRegionOut) = self.buildGeoAnnotation(with: geoEvent)
+            viewRegion = viewRegionOut ?? viewRegion
 
             return annotation
         }
@@ -100,6 +83,33 @@ class LocationMapViewController: UIViewController, NSFetchedResultsControllerDel
         if let viewRegion = viewRegion {
             mapView.setRegion(viewRegion, animated: true)
         }
+    }
+
+    func buildGeoAnnotation(with geoEvent: GeoEvent) -> (annotation: GeoAnnotation?, viewRegion: MKCoordinateRegion?) {
+        guard let timeStamp = geoEvent.timestamp else { return (nil, nil) }
+        var viewRegion: MKCoordinateRegion?
+
+        let timeString = dateFormatter.string(from: timeStamp)
+        let coordinate = CLLocationCoordinate2DMake(geoEvent.latitude, geoEvent.longitude)
+        let annotation = GeoAnnotation(coordinate: coordinate)
+
+        annotation.title = "\(timeString) \(geoEvent.speedMPH)"
+
+        let centerCoordinates = CLLocationCoordinate2DMake(
+            geoEvent.latitude,
+            geoEvent.longitude
+        )
+
+        let meters_per_mile = 1609.3
+
+        let radius: CLLocationDistance = 15 * meters_per_mile
+        viewRegion = MKCoordinateRegion(
+            center: centerCoordinates,
+            latitudinalMeters: radius,
+            longitudinalMeters: radius
+        )
+
+        return (annotation, viewRegion)
     }
 
     // MARK: - Fetched results controller
@@ -140,19 +150,40 @@ class LocationMapViewController: UIViewController, NSFetchedResultsControllerDel
     private var _fetchedResultsController: NSFetchedResultsController<GeoEvent>? = nil
 
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        //TODO: Lock isn't required with getter/setter locking the events.
     }
 
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
         let newEvent = anObject as! GeoEvent
+        let allAnnotations = mapView.annotations
+
         switch type {
             case .insert:
                 mapEvents.insert(newEvent, at: newIndexPath!.row)
+                let (newAnnotation, mapViewRegion) = buildGeoAnnotation(with: newEvent)
+                if let newAnnotation = newAnnotation {
+                    mapView.addAnnotation(newAnnotation)
+                }
+
+                if let mapViewRegion = mapViewRegion {
+                    mapView.setRegion(mapViewRegion, animated: true)
+                }
+
             case .delete:
-                mapEvents.remove(at: indexPath!.row)
+                let existingAnnotation = allAnnotations[indexPath!.row]
+                _ = mapEvents.remove(at: indexPath!.row)
+                mapView.removeAnnotation(existingAnnotation)
+
             case .update:
                 _ = mapEvents.remove(at: indexPath!.row)
+                let existingAnnotation = allAnnotations[indexPath!.row]
+                mapView.removeAnnotation(existingAnnotation)
+
                 mapEvents.insert(newEvent, at: indexPath!.row)
+                let newAnnotation = buildGeoAnnotation(with: newEvent)
+                if let newAnnotation = newAnnotation.annotation {
+                    mapView.addAnnotation(newAnnotation)
+                }
+
             case .move:
                 let orignalEvent = mapEvents.remove(at: indexPath!.row)
                 mapEvents.insert(orignalEvent, at: newIndexPath!.row)
@@ -163,11 +194,10 @@ class LocationMapViewController: UIViewController, NSFetchedResultsControllerDel
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        //TODO: Reload pins here?
         log.appendLog("TODO controllerDidChangeContent but not handled.", eventSource: .locationViewController)
     }
 
-    //MARK: - Mapview methods
+    //MARK: - Mapview Delegate methods
 
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
         guard view.annotation is GeoAnnotation
@@ -235,6 +265,8 @@ class LocationMapViewController: UIViewController, NSFetchedResultsControllerDel
         mapView.setRegion(region, animated: true)
     }
 }
+
+//MARK: - LocationManagerDelegate
 
 extension LocationMapViewController: LocationManagerDelegate {
     func update(with location: CLLocation) {

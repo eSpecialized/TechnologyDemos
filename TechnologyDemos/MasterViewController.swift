@@ -9,9 +9,12 @@
 import CoreData
 import UIKit
 
-class MasterViewController: UITableViewController {
+final class MasterViewController: UITableViewController {
+    // MARK: - Properties
 
     var managedObjectContext: NSManagedObjectContext? = nil
+
+    // MARK: - Init and View Management
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,7 +22,7 @@ class MasterViewController: UITableViewController {
         self.clearsSelectionOnViewWillAppear = true
     }
 
-    // MARK: - Segues
+    // MARK: - Segue handling
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showLocationsTableView" {

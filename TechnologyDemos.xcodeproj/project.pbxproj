@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		352B668124EB4DA1006C86C3 /* LogSingleton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352B668024EB4DA1006C86C3 /* LogSingleton.swift */; };
 		355FD94B24EB1C50008B2868 /* GeoAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355FD94A24EB1C50008B2868 /* GeoAnnotationView.swift */; };
 		35852D2124EADAD2000D21FC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D2024EADAD2000D21FC /* AppDelegate.swift */; };
 		35852D2424EADAD2000D21FC /* TechnologyDemos.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 35852D2224EADAD2000D21FC /* TechnologyDemos.xcdatamodeld */; };
@@ -36,6 +37,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		352B668024EB4DA1006C86C3 /* LogSingleton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogSingleton.swift; sourceTree = "<group>"; };
 		353EC4B324EB2D8B00931959 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		355FD94A24EB1C50008B2868 /* GeoAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoAnnotationView.swift; sourceTree = "<group>"; };
 		35852D1D24EADAD2000D21FC /* TechnologyDemos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TechnologyDemos.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -110,6 +112,7 @@
 				35852D2024EADAD2000D21FC /* AppDelegate.swift */,
 				35852D2524EADAD2000D21FC /* SceneDelegate.swift */,
 				35852D2724EADAD2000D21FC /* MasterViewController.swift */,
+				35852D4C24EAF415000D21FC /* LogSingletonViewController.swift */,
 				35F1BD8924EB046400415660 /* Location */,
 				35852D4724EADAE9000D21FC /* CoreMotion */,
 				35852D2B24EADAD2000D21FC /* Main.storyboard */,
@@ -144,7 +147,7 @@
 			children = (
 				353EC4B424EB300700931959 /* Models */,
 				35852D4A24EAF405000D21FC /* CoreMotionSingleton.swift */,
-				35852D4C24EAF415000D21FC /* LogSingletonViewController.swift */,
+				352B668024EB4DA1006C86C3 /* LogSingleton.swift */,
 				35F1BD8C24EB066D00415660 /* LocationManager.swift */,
 			);
 			path = "Singletons-Managers";
@@ -272,6 +275,7 @@
 				35852D4F24EB0096000D21FC /* AccelerometerModel.swift in Sources */,
 				35F1BD8D24EB066D00415660 /* LocationManager.swift in Sources */,
 				35852D2624EADAD2000D21FC /* SceneDelegate.swift in Sources */,
+				352B668124EB4DA1006C86C3 /* LogSingleton.swift in Sources */,
 				35852D4924EADB07000D21FC /* CoreMotionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
