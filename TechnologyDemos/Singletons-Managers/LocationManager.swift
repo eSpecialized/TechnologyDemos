@@ -181,7 +181,7 @@ extension LocationManager: CLLocationManagerDelegate {
         guard let firstLocation = locations.first else { return }
 
         //if there is low accuracy or the timestemp has been to old, discard the reading
-        guard firstLocation.horizontalAccuracy < 50, Date().timeIntervalSince(firstLocation.timestamp) < 60.0 else {
+        guard firstLocation.horizontalAccuracy < 100, Date().timeIntervalSince(firstLocation.timestamp) < 60.0 else {
                 discardCount += 1
                 log.appendLog("Discard Location Count \(discardCount) horizontalAccuracy = \(firstLocation.horizontalAccuracy)", eventSource: .location)
                 return
@@ -203,7 +203,7 @@ extension LocationManager: CLLocationManagerDelegate {
         if fabs(homeDistanceInMeters) > 200.0 {
             recordAsGeoEvent(location: firstLocation)
             locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
-            locationManager.distanceFilter = kCLDistanceFilterNone
+            locationManager.distanceFilter = 10
         } else {
             log.appendLog("No significant distance travelled. Distance from home = \(homeDistanceInMeters) meters", eventSource: .location)
             locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
