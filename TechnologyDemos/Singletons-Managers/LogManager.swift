@@ -8,7 +8,7 @@
 
 import Foundation
 
-let log = LogSingleton.shared
+let log = LogManager.shared
 
 protocol LogSingletonDelegate: class {
     func update()
@@ -17,8 +17,8 @@ protocol LogSingletonDelegate: class {
 //MARK: -
 
 // Handles all logging events vs printing to the debug panel, for viewing logs inside the app.
-final class LogSingleton {
-    static var shared = LogSingleton()
+final class LogManager {
+    static var shared = LogManager()
 
     private let dateFormatter = DateFormatter()
 
@@ -66,6 +66,7 @@ enum EventSource {
     case coreMotionViewController
     case locationMapViewController
     case locationsTableViewController
+    case coreDataController
 }
 
 extension EventSource: RawRepresentable {
@@ -89,6 +90,9 @@ extension EventSource: RawRepresentable {
 
             case "LocationsTableViewController":
                 self = .locationsTableViewController
+
+            case "CoreDataController":
+                self = .coreDataController
 
             default:
                 self = .general
@@ -114,6 +118,9 @@ extension EventSource: RawRepresentable {
 
             case .locationsTableViewController:
                 return "LocationsTableViewController"
+
+            case .coreDataController:
+                return "CoreDataController"
         }
     }
 }

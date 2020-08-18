@@ -16,7 +16,15 @@ public protocol LocationManagerDelegate: class {
 }
 
 /// Location manager for handling all CLLocationManager setup, location updates and more.
-public final class LocationManager: NSObject, NSFetchedResultsControllerDelegate {
+public final class LocationManager: NSObject {
+    // MARK: - Helper Types
+
+    //Struct for storing home location in NSUserDefaults easily.
+    private struct Location2D: Codable  {
+        let latitude: Double
+        let longitude: Double
+    }
+
     // MARK: - Properties
 
     private var discardCount = 0
@@ -27,7 +35,15 @@ public final class LocationManager: NSObject, NSFetchedResultsControllerDelegate
 
     public static var shared = LocationManager()
 
-    public var managedObjectContext: NSManagedObjectContext? = nil
+    public var managedObjectContext: NSManagedObjectContext? = nil {
+        didSet {
+            if let managedObjectContext = managedObjectContext {
+                coreDataController = CoreDataController(managedObjectContext: managedObjectContext)
+            }
+        }
+    }
+
+    private var coreDataController: CoreDataController?
 
     public weak var delegate: LocationManagerDelegate?
 
@@ -35,7 +51,7 @@ public final class LocationManager: NSObject, NSFetchedResultsControllerDelegate
         return locationUpdating
     }
 
-    // MARK: - Init and View Management
+    // MARK: - Initialization
 
     public override init() {
         super.init()
@@ -114,64 +130,6 @@ public final class LocationManager: NSObject, NSFetchedResultsControllerDelegate
             print(error)
         }
     }
-
-    private func recordAsGeoEvent(location: CLLocation) {
-        let coordinate = location.coordinate
-
-        let speedMeasure = Measurement<UnitSpeed>(value: location.speed, unit: .metersPerSecond)
-
-        let context = self.fetchedResultsController.managedObjectContext
-        let newGeoEvent = GeoEvent(context: context)
-
-        newGeoEvent.timestamp = Date()
-        newGeoEvent.latitude = coordinate.latitude
-        newGeoEvent.longitude = coordinate.longitude
-
-        newGeoEvent.speedMPH = speedMeasure.converted(to: .milesPerHour).value
-
-        do {
-            try context.save()
-        } catch {
-            let nserror = error as NSError
-            log.appendLog("Unresolved error \(nserror)", eventSource: .location)
-        }
-    }
-
-    private var fetchedResultsController: NSFetchedResultsController<GeoEvent> {
-        if _fetchedResultsController != nil {
-            return _fetchedResultsController!
-        }
-
-        let fetchRequest: NSFetchRequest<GeoEvent> = GeoEvent.fetchRequest()
-
-        fetchRequest.fetchBatchSize = 20
-
-        // Edit the sort key as appropriate.
-        let sortDescriptor = NSSortDescriptor(key: "timestamp", ascending: false)
-
-        fetchRequest.sortDescriptors = [sortDescriptor]
-
-        let aFetchedResultsController = NSFetchedResultsController(
-                fetchRequest: fetchRequest,
-                managedObjectContext: self.managedObjectContext!,
-                sectionNameKeyPath: nil,
-                cacheName: "Master"
-        )
-        
-        aFetchedResultsController.delegate = self
-        _fetchedResultsController = aFetchedResultsController
-
-        do {
-            try _fetchedResultsController!.performFetch()
-        } catch {
-            let nserror = error as NSError
-            assertionFailure("Unresolved error \(nserror), \(nserror.userInfo)")
-        }
-
-        return _fetchedResultsController!
-    }
-
-    private var _fetchedResultsController: NSFetchedResultsController<GeoEvent>? = nil
 }
 
 // MARK: - Location Manager delegates
@@ -201,7 +159,7 @@ extension LocationManager: CLLocationManagerDelegate {
 
         //Only record if the distance from Home is 200 or more meters.
         if fabs(homeDistanceInMeters) > 200.0 {
-            recordAsGeoEvent(location: firstLocation)
+            coreDataController?.createGeoEvent(location: firstLocation)
             locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
             locationManager.distanceFilter = 10
         } else {
@@ -213,7 +171,7 @@ extension LocationManager: CLLocationManagerDelegate {
 
         if homeLocation == nil {
             addHomeLocation(firstLocation)
-            recordAsGeoEvent(location: firstLocation)
+            coreDataController?.createGeoEvent(location: firstLocation)
         }
 
         lastLocation = firstLocation
@@ -242,10 +200,4 @@ extension LocationManager: CLLocationManagerDelegate {
         //try to startup
         start()
     }
-}
-
-//Struct for storing home location in NSUserDefaults easily.
-struct Location2D: Codable  {
-    let latitude: Double
-    let longitude: Double
 }

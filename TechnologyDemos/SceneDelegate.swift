@@ -28,7 +28,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewContro
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {
-        CoreMotionSingleton.shared.start()
+        CoreMotionManager.shared.start()
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
@@ -39,7 +39,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewContro
 
     func sceneDidEnterBackground(_ scene: UIScene) {
         (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
-        CoreMotionSingleton.shared.start()
+        CoreMotionManager.shared.start()
     }
 
 }

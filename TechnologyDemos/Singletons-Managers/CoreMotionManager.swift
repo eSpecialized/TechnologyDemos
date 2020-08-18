@@ -11,13 +11,13 @@ import CoreMotion
 
 
 /// A singleton to Manage all CoreMotion events.
-public final class CoreMotionSingleton {
+public final class CoreMotionManager {
     // MARK: - Properties
 
     private var motionManager = CMMotionManager()
     private(set) var maxModel = AccelerometerModel.zero()
 
-    public static var shared = CoreMotionSingleton()
+    public static var shared = CoreMotionManager()
     public var backgroundUpdates = true
     public var updateAccelerometerHandler: ((AccelerometerModel) -> ())?
 

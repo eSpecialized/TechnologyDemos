@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		352B668124EB4DA1006C86C3 /* LogSingleton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352B668024EB4DA1006C86C3 /* LogSingleton.swift */; };
+		352B668124EB4DA1006C86C3 /* LogManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 352B668024EB4DA1006C86C3 /* LogManager.swift */; };
 		355FD94B24EB1C50008B2868 /* GeoAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355FD94A24EB1C50008B2868 /* GeoAnnotationView.swift */; };
 		35852D2124EADAD2000D21FC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D2024EADAD2000D21FC /* AppDelegate.swift */; };
 		35852D2424EADAD2000D21FC /* TechnologyDemos.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 35852D2224EADAD2000D21FC /* TechnologyDemos.xcdatamodeld */; };
@@ -18,9 +18,10 @@
 		35852D3224EADAD6000D21FC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 35852D3024EADAD6000D21FC /* LaunchScreen.storyboard */; };
 		35852D3D24EADAD6000D21FC /* TechnologyDemosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D3C24EADAD6000D21FC /* TechnologyDemosTests.swift */; };
 		35852D4924EADB07000D21FC /* CoreMotionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D4824EADB07000D21FC /* CoreMotionViewController.swift */; };
-		35852D4B24EAF405000D21FC /* CoreMotionSingleton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D4A24EAF405000D21FC /* CoreMotionSingleton.swift */; };
+		35852D4B24EAF405000D21FC /* CoreMotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D4A24EAF405000D21FC /* CoreMotionManager.swift */; };
 		35852D4D24EAF415000D21FC /* LogSingletonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D4C24EAF415000D21FC /* LogSingletonViewController.swift */; };
 		35852D4F24EB0096000D21FC /* AccelerometerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D4E24EB0096000D21FC /* AccelerometerModel.swift */; };
+		35D4F57524EC3A04001E997A /* CoreDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D4F57424EC3A04001E997A /* CoreDataController.swift */; };
 		35F1BD8624EB03A600415660 /* LocationMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F1BD8524EB03A600415660 /* LocationMapViewController.swift */; };
 		35F1BD8B24EB048300415660 /* LocationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F1BD8A24EB048300415660 /* LocationsTableViewController.swift */; };
 		35F1BD8D24EB066D00415660 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F1BD8C24EB066D00415660 /* LocationManager.swift */; };
@@ -37,7 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		352B668024EB4DA1006C86C3 /* LogSingleton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogSingleton.swift; sourceTree = "<group>"; };
+		352B668024EB4DA1006C86C3 /* LogManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogManager.swift; sourceTree = "<group>"; };
 		353EC4B324EB2D8B00931959 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		355FD94A24EB1C50008B2868 /* GeoAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoAnnotationView.swift; sourceTree = "<group>"; };
 		35852D1D24EADAD2000D21FC /* TechnologyDemos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TechnologyDemos.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -53,9 +54,11 @@
 		35852D3C24EADAD6000D21FC /* TechnologyDemosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TechnologyDemosTests.swift; sourceTree = "<group>"; };
 		35852D3E24EADAD6000D21FC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		35852D4824EADB07000D21FC /* CoreMotionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMotionViewController.swift; sourceTree = "<group>"; };
-		35852D4A24EAF405000D21FC /* CoreMotionSingleton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMotionSingleton.swift; sourceTree = "<group>"; };
+		35852D4A24EAF405000D21FC /* CoreMotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMotionManager.swift; sourceTree = "<group>"; };
 		35852D4C24EAF415000D21FC /* LogSingletonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogSingletonViewController.swift; sourceTree = "<group>"; };
 		35852D4E24EB0096000D21FC /* AccelerometerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccelerometerModel.swift; sourceTree = "<group>"; };
+		35D4F57324EC2F4A001E997A /* TechnologyDemos v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "TechnologyDemos v2.xcdatamodel"; sourceTree = "<group>"; };
+		35D4F57424EC3A04001E997A /* CoreDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataController.swift; sourceTree = "<group>"; };
 		35F1BD8524EB03A600415660 /* LocationMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationMapViewController.swift; sourceTree = "<group>"; };
 		35F1BD8A24EB048300415660 /* LocationsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationsTableViewController.swift; sourceTree = "<group>"; };
 		35F1BD8C24EB066D00415660 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
@@ -146,9 +149,10 @@
 			isa = PBXGroup;
 			children = (
 				353EC4B424EB300700931959 /* Models */,
-				35852D4A24EAF405000D21FC /* CoreMotionSingleton.swift */,
-				352B668024EB4DA1006C86C3 /* LogSingleton.swift */,
+				35852D4A24EAF405000D21FC /* CoreMotionManager.swift */,
+				352B668024EB4DA1006C86C3 /* LogManager.swift */,
 				35F1BD8C24EB066D00415660 /* LocationManager.swift */,
+				35D4F57424EC3A04001E997A /* CoreDataController.swift */,
 			);
 			path = "Singletons-Managers";
 			sourceTree = "<group>";
@@ -271,11 +275,12 @@
 				35852D4D24EAF415000D21FC /* LogSingletonViewController.swift in Sources */,
 				35852D2124EADAD2000D21FC /* AppDelegate.swift in Sources */,
 				35F1BD8624EB03A600415660 /* LocationMapViewController.swift in Sources */,
-				35852D4B24EAF405000D21FC /* CoreMotionSingleton.swift in Sources */,
+				35852D4B24EAF405000D21FC /* CoreMotionManager.swift in Sources */,
 				35852D4F24EB0096000D21FC /* AccelerometerModel.swift in Sources */,
 				35F1BD8D24EB066D00415660 /* LocationManager.swift in Sources */,
+				35D4F57524EC3A04001E997A /* CoreDataController.swift in Sources */,
 				35852D2624EADAD2000D21FC /* SceneDelegate.swift in Sources */,
-				352B668124EB4DA1006C86C3 /* LogSingleton.swift in Sources */,
+				352B668124EB4DA1006C86C3 /* LogManager.swift in Sources */,
 				35852D4924EADB07000D21FC /* CoreMotionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -548,9 +553,10 @@
 		35852D2224EADAD2000D21FC /* TechnologyDemos.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				35D4F57324EC2F4A001E997A /* TechnologyDemos v2.xcdatamodel */,
 				35852D2324EADAD2000D21FC /* TechnologyDemos.xcdatamodel */,
 			);
-			currentVersion = 35852D2324EADAD2000D21FC /* TechnologyDemos.xcdatamodel */;
+			currentVersion = 35D4F57324EC2F4A001E997A /* TechnologyDemos v2.xcdatamodel */;
 			path = TechnologyDemos.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

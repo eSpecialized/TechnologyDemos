@@ -16,7 +16,15 @@ final class LocationsTableViewController: UITableViewController, NSFetchedResult
     private let dateFormatter = DateFormatter()
     private let locationManager = LocationManager.shared
 
-    var managedObjectContext: NSManagedObjectContext? = nil
+    var managedObjectContext: NSManagedObjectContext? = nil {
+        didSet {
+            if let managedObjectContext = managedObjectContext {
+                self.coreDataController = CoreDataController(managedObjectContext: managedObjectContext)
+            }
+        }
+    }
+
+    private var coreDataController: CoreDataController?
 
     // MARK: - Init and View Management
 
@@ -30,7 +38,15 @@ final class LocationsTableViewController: UITableViewController, NSFetchedResult
         let addButton =  UIBarButtonItem(title: "Clear All", style: .plain, target: self, action: #selector(clearAllEvents))
         navigationItem.rightBarButtonItem = addButton
 
+        navigationItem.prompt = "TripName: []"
+
         locationManager.delegate = self
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        navigationController?.setToolbarHidden(false, animated: false)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -39,6 +55,14 @@ final class LocationsTableViewController: UITableViewController, NSFetchedResult
         if locationManager.getAuthorization() {
             locationManager.start()
         }
+
+        updateUI()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        navigationController?.setToolbarHidden(true, animated: false)
     }
 
     deinit {
@@ -47,8 +71,25 @@ final class LocationsTableViewController: UITableViewController, NSFetchedResult
 
     // MARK: - Support Methods
 
+    func updateUI() {
+        if let coreDataController = coreDataController {
+            if let tripEvent = coreDataController.tripEvent, let tripName = tripEvent.tripName {
+                navigationItem.prompt = "TripName: [\(tripName)]"
+            } else {
+                navigationItem.prompt = "TripName: []"
+            }
+        }
+
+        let filterTrip = UIBarButtonItem(title: "Trip Filter", style: .plain, target: self, action: #selector(tripFilter))
+        let flexibleSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let tripName = UIBarButtonItem(title: "Name Trip", style: .plain, target: self, action: #selector(addTripName))
+
+        navigationController?.toolbar.setItems([filterTrip, flexibleSpace, tripName], animated: true)
+    }
+
     @objc
-    func clearAllEvents() {
+    private func clearAllEvents() {
+        //we just want to clear all the visible cells.
         guard let allEvents = fetchedResultsController.sections![0].objects as? [GeoEvent] else { return }
 
         let context = fetchedResultsController.managedObjectContext
@@ -57,6 +98,66 @@ final class LocationsTableViewController: UITableViewController, NSFetchedResult
             context.delete(event)
         }
 
+        tableView.reloadData()
+    }
+
+    @objc
+    private func tripFilter() {
+        //get available trip names
+        guard
+            let coreDataController = coreDataController,
+            let tripEvents = coreDataController.getTripEvents()
+        else { return }
+
+        let alertTripFilters = UIAlertController(title: "Filter for Trip", message: "by name", preferredStyle: .actionSheet)
+
+        for tripEvent in tripEvents {
+            guard let title = tripEvent.tripName else { continue }
+
+            let action = UIAlertAction(title: title, style: .default) { action in
+                //filtering is done automatically in the coreDataController if tripEvent is set
+                coreDataController.tripEvent = tripEvent
+                self._fetchedResultsController = nil
+                self.updateUI()
+                self.tableView.reloadData()
+            }
+            alertTripFilters.addAction(action)
+        }
+
+        let actionCancel = UIAlertAction(title: "Cancel", style: .destructive)
+        alertTripFilters.addAction(actionCancel)
+
+        present(alertTripFilters, animated: true, completion: nil)
+    }
+
+    @objc
+    private func addTripName() {
+        let tripAlert = UIAlertController(title: "Trip Name", message: "Type a Name for this trip", preferredStyle: .alert)
+
+        tripAlert.addTextField { textfield in
+            textfield.placeholder = "Type Name here"
+        }
+
+        let actionOk = UIAlertAction(title: "Add", style: .default) { action in
+            guard
+                let textfield = tripAlert.textFields?.first,
+                let nameText = textfield.text
+            else { return }
+
+            self.addTripEvent(named: nameText)
+        }
+        tripAlert.addAction(actionOk)
+
+        let actionCancel = UIAlertAction(title: "Cancel", style: .destructive)
+        tripAlert.addAction(actionCancel)
+
+        present(tripAlert, animated: true, completion: nil)
+    }
+
+    private func addTripEvent(named: String) {
+        coreDataController?.createTripEvent(named: named)
+        _fetchedResultsController = nil
+        updateUI()
         tableView.reloadData()
     }
 
@@ -124,6 +225,13 @@ final class LocationsTableViewController: UITableViewController, NSFetchedResult
         let sortDescriptor = NSSortDescriptor(key: "timestamp", ascending: false)
 
         fetchRequest.sortDescriptors = [sortDescriptor]
+        fetchRequest.relationshipKeyPathsForPrefetching = ["TripEvent"]
+
+        //filter by tripEvents here
+        if let tripEvent = coreDataController?.tripEvent {
+            let predicate = NSPredicate(format: "tripevent == %@", tripEvent)
+            fetchRequest.predicate = predicate
+        }
 
         // Edit the section name key path and cache name if appropriate.
         // nil for section name key path means "no sections".
