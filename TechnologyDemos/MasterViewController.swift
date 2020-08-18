@@ -20,6 +20,29 @@ final class MasterViewController: UITableViewController {
         super.viewDidLoad()
 
         self.clearsSelectionOnViewWillAppear = true
+
+        updateUI()
+    }
+
+    // MARK: - Segue handling
+
+    @objc
+    private func toggleNavigation() {
+        if LocationManager.shared.isLocationUpdating {
+            LocationManager.shared.stop()
+        } else {
+            LocationManager.shared.start()
+        }
+
+        updateUI()
+    }
+
+    private func updateUI() {
+        if LocationManager.shared.isLocationUpdating {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Stop Location", style: .plain, target: self, action: #selector(toggleNavigation))
+        } else {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Start Location", style: .plain, target: self, action: #selector(toggleNavigation))
+        }
     }
 
     // MARK: - Segue handling

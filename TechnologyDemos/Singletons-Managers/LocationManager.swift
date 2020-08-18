@@ -43,7 +43,7 @@ public final class LocationManager: NSObject {
         }
     }
 
-    private var coreDataController: CoreDataController?
+    public var coreDataController: CoreDataController?
 
     public weak var delegate: LocationManagerDelegate?
 
@@ -59,9 +59,10 @@ public final class LocationManager: NSObject {
         locationManager.delegate = self
 
         //for lower power consumption.
-        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
-
+        locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+        locationManager.distanceFilter = kCLHeadingFilterNone
         locationManager.allowsBackgroundLocationUpdates = true
+        locationManager.showsBackgroundLocationIndicator = true
 
         let userDefaults = UserDefaults.standard
         let decoder = JSONDecoder()
@@ -151,22 +152,18 @@ extension LocationManager: CLLocationManagerDelegate {
 
         let coordinate = firstLocation.coordinate
         let locationText = "Lat:\(coordinate.latitude) Long:\(coordinate.longitude)"
-        let speedMeasure = Measurement<UnitSpeed>(value: firstLocation.speed, unit: .metersPerSecond)
-        let mphText = fabs(speedMeasure.value)
-        log.appendLog("didUpdateLocations \(locationText) speed MPH = \(mphText)", eventSource: .location)
+        let speedMeasure = Measurement<UnitSpeed>(value: firstLocation.speed, unit: .metersPerSecond).converted(to: .milesPerHour)
+        let mphValue = fabs(speedMeasure.value)
+        let mphString = String(format: "%.1f", mphValue)
+        log.appendLog("didUpdateLocations \(locationText) speed MPH = \(mphString)", eventSource: .location)
 
         let homeDistanceInMeters = fabs(homeLocation?.distance(from: firstLocation) ?? 0.0)
 
         //Only record if the distance from Home is 200 or more meters.
-        if fabs(homeDistanceInMeters) > 200.0 {
+        if fabs(homeDistanceInMeters) > 200.0 && mphValue > 1.0 {
             coreDataController?.createGeoEvent(location: firstLocation)
-            locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
-            locationManager.distanceFilter = 10
         } else {
             log.appendLog("No significant distance travelled. Distance from home = \(homeDistanceInMeters) meters", eventSource: .location)
-            locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
-            //bump the distanceFilter up to prevent to many readings and to save power.
-            locationManager.distanceFilter = 100
         }
 
         if homeLocation == nil {

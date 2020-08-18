@@ -147,7 +147,9 @@ final class LocationMapViewController: UIViewController, NSFetchedResultsControl
         let coordinate = CLLocationCoordinate2DMake(geoEvent.latitude, geoEvent.longitude)
         let annotation = GeoAnnotation(coordinate: coordinate)
 
-        annotation.title = "\(timeString) \(geoEvent.speedMPH)"
+        let mph = String(format: "mph: %.1f", geoEvent.speedMPH)
+
+        annotation.title = "\(timeString) \(mph)"
 
         let centerCoordinates = CLLocationCoordinate2DMake(
             geoEvent.latitude,

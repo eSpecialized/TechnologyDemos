@@ -23,7 +23,7 @@ final class CoreMotionViewController: UIViewController {
     private var updateAccelerometerHandler:  ((AccelerometerModel) -> ())?
     private var model = AccelerometerModel(xAccel: 0, yAccel: 0, zAccel: 0)
 
-    let motion = CoreMotionManager.shared
+    private let motion = CoreMotionManager.shared
 
     // MARK: - Init and View Management
 

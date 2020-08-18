@@ -12,7 +12,6 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewContro
 
     var window: UIWindow?
 
-
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let window = window else { return }
         guard let navigationController = window.rootViewController as? UINavigationController else { return }
@@ -20,8 +19,12 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewContro
         let controller = navigationController.topViewController as! MasterViewController
         controller.managedObjectContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
 
+        guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else { return }
+
+        let coreDataController = CoreDataController(managedObjectContext: context)
         let locationManager = LocationManager.shared
-        locationManager.managedObjectContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
+        locationManager.managedObjectContext = context
+        locationManager.coreDataController = coreDataController
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -41,6 +44,4 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewContro
         (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
         CoreMotionManager.shared.start()
     }
-
 }
-
