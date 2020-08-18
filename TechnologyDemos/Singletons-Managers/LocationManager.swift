@@ -19,10 +19,11 @@ public protocol LocationManagerDelegate: class {
 public final class LocationManager: NSObject, NSFetchedResultsControllerDelegate {
     // MARK: - Properties
 
+    private var discardCount = 0
     private var locationManager = CLLocationManager()
     private var locationUpdating = false
     private var lastLocation: CLLocation?
-    private var homeLocation: CLLocation?
+    @objc dynamic var homeLocation: CLLocation?
 
     public static var shared = LocationManager()
 
@@ -39,7 +40,6 @@ public final class LocationManager: NSObject, NSFetchedResultsControllerDelegate
     public override init() {
         super.init()
 
-        locationManager.requestAlwaysAuthorization()
         locationManager.delegate = self
 
         //for lower power consumption.
@@ -65,6 +65,19 @@ public final class LocationManager: NSObject, NSFetchedResultsControllerDelegate
     }
 
     // MARK: - Support Methods
+
+    /// If we were already authorized, return true so we can call startup()
+    public func getAuthorization() -> Bool {
+        guard
+            CLLocationManager.authorizationStatus() != .authorizedAlways ||
+            CLLocationManager.authorizationStatus() != .authorizedWhenInUse
+        else {
+            return true
+        }
+
+        locationManager.requestAlwaysAuthorization()
+        return false
+    }
 
     /// Starts Location Tracking
     public func start() {
@@ -167,6 +180,13 @@ extension LocationManager: CLLocationManagerDelegate {
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let firstLocation = locations.first else { return }
 
+        //if there is low accuracy or the timestemp has been to old, discard the reading
+        guard firstLocation.horizontalAccuracy < 50, Date().timeIntervalSince(firstLocation.timestamp) < 60.0 else {
+                discardCount += 1
+                log.appendLog("Discard Location Count \(discardCount) horizontalAccuracy = \(firstLocation.horizontalAccuracy)", eventSource: .location)
+                return
+        }
+
         DispatchQueue.main.async { [weak self] in
             self?.delegate?.update(with: firstLocation)
         }
@@ -183,13 +203,15 @@ extension LocationManager: CLLocationManagerDelegate {
         if fabs(homeDistanceInMeters) > 200.0 {
             recordAsGeoEvent(location: firstLocation)
             locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+            locationManager.distanceFilter = kCLDistanceFilterNone
         } else {
             log.appendLog("No significant distance travelled. Distance from home = \(homeDistanceInMeters) meters", eventSource: .location)
             locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+            //bump the distanceFilter up to prevent to many readings and to save power.
+            locationManager.distanceFilter = 100
         }
 
-        //Simple, lets just assume you are at the home location for the first location after one is skipped.
-        if lastLocation != nil, homeLocation == nil {
+        if homeLocation == nil {
             addHomeLocation(firstLocation)
             recordAsGeoEvent(location: firstLocation)
         }

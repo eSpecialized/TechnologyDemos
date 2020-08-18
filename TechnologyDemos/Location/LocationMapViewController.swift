@@ -32,8 +32,11 @@ final class LocationMapViewController: UIViewController, NSFetchedResultsControl
     private var mapEventsLock = NSLock()
 
     private let SimplePinIdent = "SimplePinIdent"
+
+    @objc
     private let locationManager = LocationManager.shared
     private let dateFormatter = DateFormatter()
+    private var homeLocationObserver: NSKeyValueObservation?
 
     var managedObjectContext: NSManagedObjectContext? = nil
 
@@ -50,18 +53,58 @@ final class LocationMapViewController: UIViewController, NSFetchedResultsControl
 
         mapView.setUserTrackingMode(.followWithHeading, animated: true)
         locationManager.delegate = self
+
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Reset Home", style: .plain, target: self, action: #selector(resetHome))
+        if locationManager.homeLocation != nil {
+            navigationItem.rightBarButtonItem?.isEnabled = true
+        } else {
+            navigationItem.rightBarButtonItem?.isEnabled = false
+        }
+
+        homeLocationObserver = observe(
+            \.locationManager.homeLocation,
+            options: [.old, .new]) { object, change in
+                if let _ = change.newValue {
+                    print("new Home Location")
+                    self.navigationItem.rightBarButtonItem?.isEnabled = true
+                }
+        }
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if locationManager.getAuthorization() {
+            locationManager.start()
+        }
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        homeLocationObserver = nil
     }
 
     deinit {
-        log.appendLog("de-init", eventSource: .locationViewController)
+        mapView.annotations.forEach { self.mapView.removeAnnotation($0) }
+        mapView.delegate = nil
+
+        log.appendLog("de-init", eventSource: .locationMapViewController)
     }
 
     // MARK: - Support Methods
 
+    @objc
+    private func resetHome() {
+        locationManager.homeLocation = nil
+        navigationItem.rightBarButtonItem?.isEnabled = false
+        locationManager.stop()
+        locationManager.start()
+    }
+
     private func loadAllEvents() {
         if let allEvents = fetchedResultsController.sections![0].objects as? [GeoEvent] {
             print("Events retrieved = \(allEvents.count)")
-            navigationItem.prompt = "Events retrieved = \(allEvents.count)"
+            navigationItem.prompt = "Events Count = \(allEvents.count)"
             self.mapEvents = allEvents
         }
     }
@@ -72,22 +115,33 @@ final class LocationMapViewController: UIViewController, NSFetchedResultsControl
         var viewRegion: MKCoordinateRegion?
 
         let annotations = mapEvents.compactMap { geoEvent -> GeoAnnotation? in
-            let (annotation, viewRegionOut) = self.buildGeoAnnotation(with: geoEvent)
-            viewRegion = viewRegionOut ?? viewRegion
+            guard let (annotation, viewRegionOut) = self.buildGeoAnnotation(with: geoEvent) else {
+               return nil
+            }
+
+            viewRegion = viewRegionOut
 
             return annotation
         }
 
         mapView.addAnnotations(annotations)
 
+        if let (annotation, homeViewRegion) = buildHomeAnnotation() {
+            mapView.addAnnotation(annotation)
+
+            // Only Set viewRegion if one wasn't set
+            if viewRegion == nil {
+                viewRegion = homeViewRegion
+            }
+        }
+
         if let viewRegion = viewRegion {
             mapView.setRegion(viewRegion, animated: true)
         }
     }
 
-    func buildGeoAnnotation(with geoEvent: GeoEvent) -> (annotation: GeoAnnotation?, viewRegion: MKCoordinateRegion?) {
-        guard let timeStamp = geoEvent.timestamp else { return (nil, nil) }
-        var viewRegion: MKCoordinateRegion?
+    func buildGeoAnnotation(with geoEvent: GeoEvent) -> (annotation: GeoAnnotation, viewRegion: MKCoordinateRegion)? {
+        guard let timeStamp = geoEvent.timestamp else { return nil }
 
         let timeString = dateFormatter.string(from: timeStamp)
         let coordinate = CLLocationCoordinate2DMake(geoEvent.latitude, geoEvent.longitude)
@@ -103,7 +157,32 @@ final class LocationMapViewController: UIViewController, NSFetchedResultsControl
         let meters_per_mile = 1609.3
 
         let radius: CLLocationDistance = 15 * meters_per_mile
-        viewRegion = MKCoordinateRegion(
+        let viewRegion = MKCoordinateRegion(
+            center: centerCoordinates,
+            latitudinalMeters: radius,
+            longitudinalMeters: radius
+        )
+
+        return (annotation, viewRegion)
+    }
+
+    func buildHomeAnnotation() -> (annotation: GeoAnnotation, viewRegion: MKCoordinateRegion)? {
+        guard let homeLocation = locationManager.homeLocation else { return nil }
+
+        let coordinate = CLLocationCoordinate2DMake(homeLocation.coordinate.latitude, homeLocation.coordinate.longitude)
+        let annotation = GeoAnnotation(coordinate: coordinate)
+
+        annotation.title = "Home"
+
+        let centerCoordinates = CLLocationCoordinate2DMake(
+            coordinate.latitude,
+            coordinate.longitude
+        )
+
+        let meters_per_mile = 1609.3
+
+        let radius: CLLocationDistance = 15 * meters_per_mile
+        let viewRegion = MKCoordinateRegion(
             center: centerCoordinates,
             latitudinalMeters: radius,
             longitudinalMeters: radius
@@ -158,17 +237,17 @@ final class LocationMapViewController: UIViewController, NSFetchedResultsControl
 
         switch type {
             case .insert:
+                log.appendLog("insert", eventSource: .locationMapViewController)
                 mapEvents.insert(newEvent, at: newIndexPath!.row)
-                let (newAnnotation, mapViewRegion) = buildGeoAnnotation(with: newEvent)
-                if let newAnnotation = newAnnotation {
+                if let (newAnnotation, mapViewRegion) = buildGeoAnnotation(with: newEvent) {
                     mapView.addAnnotation(newAnnotation)
-                }
-
-                if let mapViewRegion = mapViewRegion {
                     mapView.setRegion(mapViewRegion, animated: true)
                 }
 
+                navigationItem.prompt = "Events Count = \(mapEvents.count)"
+
             case .delete:
+                log.appendLog("delete", eventSource: .locationMapViewController)
                 let existingAnnotation = allAnnotations[indexPath!.row]
                 _ = mapEvents.remove(at: indexPath!.row)
                 mapView.removeAnnotation(existingAnnotation)
@@ -179,8 +258,7 @@ final class LocationMapViewController: UIViewController, NSFetchedResultsControl
                 mapView.removeAnnotation(existingAnnotation)
 
                 mapEvents.insert(newEvent, at: indexPath!.row)
-                let newAnnotation = buildGeoAnnotation(with: newEvent)
-                if let newAnnotation = newAnnotation.annotation {
+                if let (newAnnotation, _) = buildGeoAnnotation(with: newEvent) {
                     mapView.addAnnotation(newAnnotation)
                 }
 
@@ -194,7 +272,7 @@ final class LocationMapViewController: UIViewController, NSFetchedResultsControl
     }
 
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        log.appendLog("TODO controllerDidChangeContent but not handled.", eventSource: .locationViewController)
+        log.appendLog("TODO controllerDidChangeContent but not handled.", eventSource: .locationMapViewController)
     }
 
     //MARK: - Mapview Delegate methods
@@ -203,7 +281,7 @@ final class LocationMapViewController: UIViewController, NSFetchedResultsControl
         guard view.annotation is GeoAnnotation
         else { return }
 
-        log.appendLog("TODO clicked annotation but no info to present.", eventSource: .locationViewController)
+        log.appendLog("TODO clicked annotation but no info to present.", eventSource: .locationMapViewController)
         //performSegue(withIdentifier: "presentWebInfo", sender: self)
     }
 

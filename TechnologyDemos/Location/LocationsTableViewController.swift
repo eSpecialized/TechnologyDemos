@@ -22,8 +22,6 @@ final class LocationsTableViewController: UITableViewController, NSFetchedResult
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
         self.clearsSelectionOnViewWillAppear = true
 
         dateFormatter.timeStyle = .short
@@ -33,6 +31,14 @@ final class LocationsTableViewController: UITableViewController, NSFetchedResult
         navigationItem.rightBarButtonItem = addButton
 
         locationManager.delegate = self
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        if locationManager.getAuthorization() {
+            locationManager.start()
+        }
     }
 
     deinit {
@@ -179,6 +185,6 @@ final class LocationsTableViewController: UITableViewController, NSFetchedResult
 
 extension LocationsTableViewController: LocationManagerDelegate {
     func update(with location: CLLocation) {
-        tableView.reloadData()
+        //TODO: update no op
     }
 }

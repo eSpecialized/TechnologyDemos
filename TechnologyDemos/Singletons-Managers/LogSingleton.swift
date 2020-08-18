@@ -64,7 +64,7 @@ enum EventSource {
     case motionAccel
     case location
     case coreMotionViewController
-    case locationViewController
+    case locationMapViewController
     case locationsTableViewController
 }
 
@@ -84,8 +84,8 @@ extension EventSource: RawRepresentable {
             case "CoreMotionViewController":
                 self = .coreMotionViewController
 
-            case "LocationViewController":
-                self = .locationViewController
+            case "LocationMapViewController":
+                self = .locationMapViewController
 
             case "LocationsTableViewController":
                 self = .locationsTableViewController
@@ -109,8 +109,8 @@ extension EventSource: RawRepresentable {
             case .coreMotionViewController:
                 return "CoreMotionViewController"
 
-            case .locationViewController:
-                return "LocationViewController"
+            case .locationMapViewController:
+                return "LocationMapViewController"
 
             case .locationsTableViewController:
                 return "LocationsTableViewController"

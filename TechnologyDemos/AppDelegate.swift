@@ -14,7 +14,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         CoreMotionSingleton.shared.start()
-        LocationManager.shared.start()
         
         return true
     }
@@ -54,6 +53,4 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
     }
-
 }
-

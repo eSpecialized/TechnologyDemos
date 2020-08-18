@@ -36,7 +36,6 @@ final class GeoAnnotationView: MKPinAnnotationView {
         canShowCallout = true
         isDraggable = false
         animatesDrop = true
-        canShowCallout = true
 
         if let geoAnnotation = annotation as? GeoAnnotation, let timeStamp = geoAnnotation.date {
             switch timeStamp.timeIntervalSince(Date()) {
@@ -53,8 +52,6 @@ final class GeoAnnotationView: MKPinAnnotationView {
             // no data
             pinTintColor = .red
         }
-        let rightButton = UIButton(type: .detailDisclosure)
-        rightCalloutAccessoryView = rightButton
     }
 
     deinit {
