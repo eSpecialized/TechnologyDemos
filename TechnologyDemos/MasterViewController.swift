@@ -9,9 +9,10 @@
 import CoreData
 import UIKit
 
-final class MasterViewController: UITableViewController {
+final class MasterViewController: UITableViewController, ManagedObjectProtocol {
     // MARK: - Properties
 
+    @IBOutlet weak var bartext: UIBarButtonItem!
     var managedObjectContext: NSManagedObjectContext? = nil
 
     // MARK: - Init and View Management
@@ -22,6 +23,11 @@ final class MasterViewController: UITableViewController {
         self.clearsSelectionOnViewWillAppear = true
 
         updateUI()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        CoreMotionManager.shared.delegate = self
     }
 
     // MARK: - Segue handling
@@ -48,16 +54,22 @@ final class MasterViewController: UITableViewController {
     // MARK: - Segue handling
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showLocationsTableView" {
-            if let destination = segue.destination as? LocationsTableViewController {
-                destination.managedObjectContext = managedObjectContext
-            }
+        guard let identifier = segue.identifier else { return }
+
+        guard let destination = segue.destination as? ManagedObjectProtocol else {
+            assertionFailure("No ManagedObjectProtocol configured for \(identifier)")
+            return
         }
 
-        if segue.identifier == "showLocationsOnMap" {
-            if let destination = segue.destination as? LocationMapViewController {
-                destination.managedObjectContext = managedObjectContext
-            }
+        destination.managedObjectContext = managedObjectContext
+    }
+}
+
+extension MasterViewController: CoreMotionManagerDelegate {
+    func updatedDateAvailable(sample: CoreMotionManager.SampleData) {
+        DispatchQueue.main.async { [weak self] in
+            //update UI
+            self?.bartext.title = CoreMotionManager.shared.lastActivityDescription
         }
     }
 }

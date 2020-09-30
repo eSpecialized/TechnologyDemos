@@ -10,7 +10,7 @@ import CoreData
 import UIKit
 import CoreLocation
 
-final class LocationsTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+final class LocationsTableViewController: UITableViewController, NSFetchedResultsControllerDelegate, ManagedObjectProtocol {
     // MARK: - Properties
 
     private let dateFormatter = DateFormatter()
@@ -63,7 +63,7 @@ final class LocationsTableViewController: UITableViewController, NSFetchedResult
 
     // MARK: - Support Methods
 
-    func updateUI() {
+    private func updateUI() {
         if let coreDataController = locationManager.coreDataController {
             if let tripEvent = coreDataController.tripEvent, let tripName = tripEvent.tripName {
                 let count = tripEvent.geoevents?.count ?? 0

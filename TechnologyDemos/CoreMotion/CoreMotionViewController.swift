@@ -35,7 +35,7 @@ final class CoreMotionViewController: UIViewController {
 
         log.appendLog("viewDidLoad", eventSource: .coreMotionViewController)
 
-        backgroundSwitch.setOn(motion.backgroundUpdates, animated: true)
+        //backgroundSwitch.setOn(motion.backgroundUpdates, animated: true)
 
         updateAccelerometerHandler = { [weak self] model in
             self?.updateUI(with: model)
@@ -63,7 +63,7 @@ final class CoreMotionViewController: UIViewController {
     // MARK: - Support Methods
 
     @IBAction func backgroundSwitchChanged(_ sender: Any) {
-        motion.backgroundUpdates = backgroundSwitch.isOn
+        //motion.backgroundUpdates = backgroundSwitch.isOn
         motion.stop()
         motion.start()
     }

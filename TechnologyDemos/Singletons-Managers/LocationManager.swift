@@ -20,7 +20,7 @@ public final class LocationManager: NSObject {
     // MARK: - Helper Types
 
     //Struct for storing home location in NSUserDefaults easily.
-    private struct Location2D: Codable  {
+    struct Location2D: Codable  {
         let latitude: Double
         let longitude: Double
     }
@@ -30,7 +30,7 @@ public final class LocationManager: NSObject {
     private var discardCount = 0
     private var locationManager = CLLocationManager()
     private var locationUpdating = false
-    private var lastLocation: CLLocation?
+    private(set) var lastLocation: CLLocation?
     @objc dynamic var homeLocation: CLLocation?
 
     public static var shared = LocationManager()
@@ -158,12 +158,23 @@ extension LocationManager: CLLocationManagerDelegate {
         log.appendLog("didUpdateLocations \(locationText) speed MPH = \(mphString)", eventSource: .location)
 
         let homeDistanceInMeters = fabs(homeLocation?.distance(from: firstLocation) ?? 0.0)
+        let distanceFromLastLocation: CLLocationDistance = {
+            if let lastLocation = lastLocation {
+                return fabs(lastLocation.distance(from: firstLocation))
+            }
+
+            return 0
+        }()
 
         //Only record if the distance from Home is 200 or more meters.
-        if fabs(homeDistanceInMeters) > 200.0 && mphValue > 1.0 {
+        // and we are going faster than 1.0 mph
+        // and the distance has been at least 100 meters
+        if fabs(homeDistanceInMeters) > 200.0 && mphValue > 1.0 && distanceFromLastLocation > 100.0 {
             coreDataController?.createGeoEvent(location: firstLocation)
         } else {
-            log.appendLog("No significant distance travelled. Distance from home = \(homeDistanceInMeters) meters", eventSource: .location)
+            if homeDistanceInMeters < 200.0 {
+                log.appendLog("No significant distance travelled. Distance from home = \(homeDistanceInMeters) meters", eventSource: .location)
+            }
         }
 
         if homeLocation == nil {
@@ -178,17 +189,22 @@ extension LocationManager: CLLocationManagerDelegate {
         let statusText: String = {
             switch status {
                 case .authorizedAlways:
-                return "authorizedAlways"
+                    return "authorizedAlways"
+
                 case .authorizedWhenInUse:
-                return "authorizedWhenInUse"
+                    return "authorizedWhenInUse"
+
                 case .denied:
-                return "denied"
+                    return "denied"
+
                 case .notDetermined:
-                return "notDetermined"
+                    return "notDetermined"
+
                 case .restricted:
-                return "restricted"
+                    return "restricted"
+
                 @unknown default:
-                return "unknown"
+                    return "unknown"
             }
         }()
 

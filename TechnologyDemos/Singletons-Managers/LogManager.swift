@@ -67,6 +67,7 @@ enum EventSource {
     case locationMapViewController
     case locationsTableViewController
     case coreDataController
+    case alertManager
 }
 
 extension EventSource: RawRepresentable {
@@ -121,6 +122,9 @@ extension EventSource: RawRepresentable {
 
             case .coreDataController:
                 return "CoreDataController"
+
+            case .alertManager:
+                return "AlertManager"
         }
     }
 }

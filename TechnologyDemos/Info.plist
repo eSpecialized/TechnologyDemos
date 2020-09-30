@@ -26,6 +26,8 @@
 	<string>Location required for showing user locations on a map. Only locally updated until App is killed.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location required for showing user locations on a map. Only locally updated until App is killed.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Access to motion is required to determine mode of movement</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

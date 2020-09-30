@@ -10,7 +10,7 @@ import CoreData
 import MapKit
 import UIKit
 
-final class LocationMapViewController: UIViewController, NSFetchedResultsControllerDelegate, MKMapViewDelegate {
+final class LocationMapViewController: UIViewController, NSFetchedResultsControllerDelegate, MKMapViewDelegate, ManagedObjectProtocol {
     // MARK: - Properties
 
     @IBOutlet weak var mapView: MKMapView!

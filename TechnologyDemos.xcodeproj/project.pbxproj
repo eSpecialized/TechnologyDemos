@@ -21,6 +21,9 @@
 		35852D4B24EAF405000D21FC /* CoreMotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D4A24EAF405000D21FC /* CoreMotionManager.swift */; };
 		35852D4D24EAF415000D21FC /* LogSingletonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D4C24EAF415000D21FC /* LogSingletonViewController.swift */; };
 		35852D4F24EB0096000D21FC /* AccelerometerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35852D4E24EB0096000D21FC /* AccelerometerModel.swift */; };
+		3591415B24F410D900245735 /* TripsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3591415A24F410D900245735 /* TripsTableViewController.swift */; };
+		3591415D24F4144E00245735 /* ManagedObjectProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3591415C24F4144E00245735 /* ManagedObjectProtocol.swift */; };
+		3591415F24F425A000245735 /* AlertManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3591415E24F425A000245735 /* AlertManager.swift */; };
 		35D4F57524EC3A04001E997A /* CoreDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D4F57424EC3A04001E997A /* CoreDataController.swift */; };
 		35F1BD8624EB03A600415660 /* LocationMapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F1BD8524EB03A600415660 /* LocationMapViewController.swift */; };
 		35F1BD8B24EB048300415660 /* LocationsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F1BD8A24EB048300415660 /* LocationsTableViewController.swift */; };
@@ -57,6 +60,9 @@
 		35852D4A24EAF405000D21FC /* CoreMotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreMotionManager.swift; sourceTree = "<group>"; };
 		35852D4C24EAF415000D21FC /* LogSingletonViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogSingletonViewController.swift; sourceTree = "<group>"; };
 		35852D4E24EB0096000D21FC /* AccelerometerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccelerometerModel.swift; sourceTree = "<group>"; };
+		3591415A24F410D900245735 /* TripsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripsTableViewController.swift; sourceTree = "<group>"; };
+		3591415C24F4144E00245735 /* ManagedObjectProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedObjectProtocol.swift; sourceTree = "<group>"; };
+		3591415E24F425A000245735 /* AlertManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertManager.swift; sourceTree = "<group>"; };
 		35D4F57324EC2F4A001E997A /* TechnologyDemos v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "TechnologyDemos v2.xcdatamodel"; sourceTree = "<group>"; };
 		35D4F57424EC3A04001E997A /* CoreDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataController.swift; sourceTree = "<group>"; };
 		35F1BD8524EB03A600415660 /* LocationMapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationMapViewController.swift; sourceTree = "<group>"; };
@@ -115,6 +121,7 @@
 				35852D2024EADAD2000D21FC /* AppDelegate.swift */,
 				35852D2524EADAD2000D21FC /* SceneDelegate.swift */,
 				35852D2724EADAD2000D21FC /* MasterViewController.swift */,
+				3591415C24F4144E00245735 /* ManagedObjectProtocol.swift */,
 				35852D4C24EAF415000D21FC /* LogSingletonViewController.swift */,
 				35F1BD8924EB046400415660 /* Location */,
 				35852D4724EADAE9000D21FC /* CoreMotion */,
@@ -150,6 +157,7 @@
 			children = (
 				353EC4B424EB300700931959 /* Models */,
 				35852D4A24EAF405000D21FC /* CoreMotionManager.swift */,
+				3591415E24F425A000245735 /* AlertManager.swift */,
 				352B668024EB4DA1006C86C3 /* LogManager.swift */,
 				35F1BD8C24EB066D00415660 /* LocationManager.swift */,
 				35D4F57424EC3A04001E997A /* CoreDataController.swift */,
@@ -160,6 +168,7 @@
 		35F1BD8924EB046400415660 /* Location */ = {
 			isa = PBXGroup;
 			children = (
+				3591415A24F410D900245735 /* TripsTableViewController.swift */,
 				35F1BD8524EB03A600415660 /* LocationMapViewController.swift */,
 				355FD94A24EB1C50008B2868 /* GeoAnnotationView.swift */,
 				35F1BD8A24EB048300415660 /* LocationsTableViewController.swift */,
@@ -269,6 +278,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				35F1BD8B24EB048300415660 /* LocationsTableViewController.swift in Sources */,
+				3591415F24F425A000245735 /* AlertManager.swift in Sources */,
 				35852D2824EADAD2000D21FC /* MasterViewController.swift in Sources */,
 				355FD94B24EB1C50008B2868 /* GeoAnnotationView.swift in Sources */,
 				35852D2424EADAD2000D21FC /* TechnologyDemos.xcdatamodeld in Sources */,
@@ -280,6 +290,8 @@
 				35F1BD8D24EB066D00415660 /* LocationManager.swift in Sources */,
 				35D4F57524EC3A04001E997A /* CoreDataController.swift in Sources */,
 				35852D2624EADAD2000D21FC /* SceneDelegate.swift in Sources */,
+				3591415D24F4144E00245735 /* ManagedObjectProtocol.swift in Sources */,
+				3591415B24F410D900245735 /* TripsTableViewController.swift in Sources */,
 				352B668124EB4DA1006C86C3 /* LogManager.swift in Sources */,
 				35852D4924EADB07000D21FC /* CoreMotionViewController.swift in Sources */,
 			);

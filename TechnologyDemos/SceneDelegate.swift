@@ -11,20 +11,26 @@ import UIKit
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate, UISplitViewControllerDelegate {
 
     var window: UIWindow?
+    var alertManager: AlertManager!
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        guard let window = window else { return }
-        guard let navigationController = window.rootViewController as? UINavigationController else { return }
+        guard
+            let window = window,
+            let navigationController = window.rootViewController as? UINavigationController,
+            let appDelegate = (UIApplication.shared.delegate as? AppDelegate)
+        else { return }
 
         let controller = navigationController.topViewController as! MasterViewController
-        controller.managedObjectContext = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext
+        let context = appDelegate.persistentContainer.viewContext
 
-        guard let context = (UIApplication.shared.delegate as? AppDelegate)?.persistentContainer.viewContext else { return }
+        controller.managedObjectContext = context
 
         let coreDataController = CoreDataController(managedObjectContext: context)
         let locationManager = LocationManager.shared
         locationManager.managedObjectContext = context
         locationManager.coreDataController = coreDataController
+
+        alertManager = AlertManager(navigationController: navigationController)
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
